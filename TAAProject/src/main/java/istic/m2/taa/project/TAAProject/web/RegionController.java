@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,12 +61,19 @@ public class RegionController {
 		
 	}
 	
-	@PostMapping(value="/region")
+	@PostMapping(value="/region",produces={MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN},consumes=MediaType.APPLICATION_JSON)
 	public Response postRegion(@RequestBody Region region){
 		
 		regionDAO.save(region);
 		
 		return  Response.noContent().build();
+	}
+	
+	@PutMapping(value="/region",produces={MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN},consumes=MediaType.APPLICATION_JSON)
+	public Response putRegion(){
+		
+		return Response.noContent().status(Status.FORBIDDEN).build();
+		
 	}
 
 }

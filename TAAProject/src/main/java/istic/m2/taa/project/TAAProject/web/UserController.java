@@ -35,11 +35,6 @@ public class UserController {
 	
 	@GetMapping(value="/user/id/{id}",produces=MediaType.APPLICATION_JSON)
 	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-		User temp = new User();
-		temp.setEmail("mai");
-		temp.setPassword("pass");
-		temp.setPseudo("toitoi");
-		userDAO.save(temp);
 		Optional<User> opt = userDAO.findById(id);
 		if( opt.isPresent( ) ){
 			return new ResponseEntity<User>(opt.get(), HttpStatus.ACCEPTED);
@@ -65,7 +60,7 @@ public class UserController {
 					   .build();
 	}
 	
-	@PutMapping(value="/user",produces=MediaType.TEXT_PLAIN)
+	@PutMapping(value="/user",produces={MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN},consumes=MediaType.APPLICATION_JSON)
 	public Response updateUser(@RequestBody User user){
 		
 		Optional<User> opt = userDAO.findById(user.getId( ) );
