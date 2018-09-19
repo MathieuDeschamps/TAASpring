@@ -1,5 +1,6 @@
 package istic.m2.taa.project.TAAProject.web;
 
+import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,6 +25,13 @@ public class UserController {
 	
 	@Autowired UserDAO userDAO;
 	
+	@GetMapping(value="/users",produces=MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<User>> getUsers(){
+		
+		List<User> users = userDAO.findAll();	
+		return new ResponseEntity<List<User>>(users,HttpStatus.ACCEPTED);
+		
+	}
 	
 	@GetMapping(value="/user/id/{id}",produces=MediaType.APPLICATION_JSON)
 	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
@@ -33,13 +41,13 @@ public class UserController {
 		temp.setPseudo("toitoi");
 		userDAO.save(temp);
 		Optional<User> opt = userDAO.findById(id);
-		if( opt.isPresent()){
+		if( opt.isPresent( ) ){
 			return new ResponseEntity<User>(opt.get(), HttpStatus.ACCEPTED);
 		}
 		else{
-			User user = new User();
-			user.setId(-1L);
-			return new ResponseEntity<User>(user,HttpStatus.ACCEPTED);
+			User user = null;
+			
+			return new ResponseEntity<User>(user,HttpStatus.NO_CONTENT);
 		}	
 	}
 	
@@ -50,14 +58,14 @@ public class UserController {
 	 return userDAO.findByName(pseudo);
 	}
 	
-	@PostMapping(value="/user",produces=MediaType.TEXT_PLAIN,consumes=MediaType.APPLICATION_JSON)
+	@PostMapping(value="/user",produces={MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN},consumes=MediaType.APPLICATION_JSON)
 	public Response addUser(@RequestBody User user){
 		userDAO.save(user);
 		return Response.noContent().status(Status.ACCEPTED)	
 					   .build();
 	}
 	
-	@PutMapping(value="/user",produces=MediaType.TEXT_PLAIN,consumes=MediaType.APPLICATION_JSON)
+	@PutMapping(value="/user",produces=MediaType.TEXT_PLAIN)
 	public Response updateUser(@RequestBody User user){
 		
 		Optional<User> opt = userDAO.findById(user.getId( ) );

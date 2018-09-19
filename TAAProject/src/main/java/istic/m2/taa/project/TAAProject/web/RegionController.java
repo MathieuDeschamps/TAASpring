@@ -1,5 +1,6 @@
 package istic.m2.taa.project.TAAProject.web;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.core.MediaType;
@@ -23,6 +24,13 @@ public class RegionController {
 	@Autowired
 	RegionDAO regionDAO;
 	
+	@GetMapping(value="/regions")
+	public ResponseEntity<List<Region>> getRegions(){
+		
+		List<Region> regions = regionDAO.findAll();
+		return new ResponseEntity<List<Region>>(regions, HttpStatus.ACCEPTED);
+		
+	}
 	@GetMapping(value="/region/id/{id}",produces=MediaType.APPLICATION_JSON)
 	public ResponseEntity<Region> getRegion( @PathVariable("id") Long id){
 		
@@ -32,9 +40,8 @@ public class RegionController {
 			Region region = opt.get();
 			return new ResponseEntity<Region>(region,HttpStatus.ACCEPTED);
 		}
-		Region region = new Region();
-		region.setId(-1);
-		return new ResponseEntity<Region>(region,HttpStatus.ACCEPTED);
+		Region region = null;
+		return new ResponseEntity<Region>(region,HttpStatus.NO_CONTENT);
 		
 	}
 	
