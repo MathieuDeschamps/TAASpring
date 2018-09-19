@@ -7,6 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 
  * Sport entity
@@ -38,6 +40,7 @@ public class Sport  {
 	}
 	
 	@ManyToMany(mappedBy="sports")
+	@JsonIgnore
 	public Set<User> getUsers() {
 		return users;
 	}
