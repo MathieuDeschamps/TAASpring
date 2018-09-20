@@ -1,10 +1,11 @@
 package istic.m2.taa.project.TAAProject.web;
 
-import javax.ws.rs.core.MediaType;
 import java.util.Optional;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import istic.m2.taa.project.TAAProject.dto.LieuDTO;
 import istic.m2.taa.project.TAAProject.entity.Lieu;
 import istic.m2.taa.project.TAAProject.entity.LieuId;
 import istic.m2.taa.project.TAAProject.repository.LieuDAO;
@@ -27,27 +27,27 @@ public class LieuController {
 	@Autowired LieuDAO lieuDAO;
 	
 	@GetMapping(value="lieu/id/{CodePostal}/{NomVille}",produces=MediaType.APPLICATION_JSON)
-	public ResponseEntity<Lieu> getLieuById(@PathVariable("CodePostal") String codepostal, @PathVariable("NomVille") String nomville){
+	public ResponseEntity<LieuDTO> getLieuById(@PathVariable("CodePostal") String codepostal, @PathVariable("NomVille") String nomville){		
 		LieuId lieuid = new LieuId();
 		lieuid.setCodePostal(codepostal);
 		lieuid.setLabelVille(nomville);
 		Optional<Lieu> optional = lieuDAO.findById(lieuid);
 		if(optional.isPresent()) {
-			return new ResponseEntity<Lieu>(optional.get() ,HttpStatus.ACCEPTED);
+			return new ResponseEntity<LieuDTO>(LieuDTO.entityToDTO(optional.get()) ,HttpStatus.ACCEPTED);
 		}
 		else {
-			return new ResponseEntity<Lieu>(new Lieu(), HttpStatus.NO_CONTENT);
+			return new ResponseEntity<LieuDTO>(LieuDTO.entityToDTO(new Lieu()), HttpStatus.NO_CONTENT);
 		}
 	}
 	
 	@GetMapping(value="lieu/label/{label}",produces=MediaType.APPLICATION_JSON)
-	public ResponseEntity<Lieu> getLieuByLabel(@PathVariable("label") String label){
+	public ResponseEntity<LieuDTO> getLieuByLabel(@PathVariable("label") String label){
 		Lieu lieu = lieuDAO.findByLabel(label);
 		if(lieu != null) {
-			return new ResponseEntity<Lieu>(lieu,HttpStatus.ACCEPTED);
+			return new ResponseEntity<LieuDTO>(LieuDTO.entityToDTO(lieu),HttpStatus.ACCEPTED);
 		}
 		else {
-			return new ResponseEntity<Lieu>(new Lieu(), HttpStatus.NO_CONTENT);
+			return new ResponseEntity<LieuDTO>(LieuDTO.entityToDTO(new Lieu()), HttpStatus.NO_CONTENT);
 		}
 	}
 	

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import istic.m2.taa.project.TAAProject.dto.SportDTO;
 import istic.m2.taa.project.TAAProject.entity.Sport;
 import istic.m2.taa.project.TAAProject.repository.SportDAO;
 
@@ -24,25 +25,25 @@ public class SportController {
 	@Autowired SportDAO sportDAO;
 	
 	@GetMapping(value="/sport/id/{id}",produces=MediaType.APPLICATION_JSON)
-	public ResponseEntity<Sport> getSportById (@PathVariable("id") long id){
+	public ResponseEntity<SportDTO> getSportById (@PathVariable("id") long id){
 		
 		Optional<Sport> optional = sportDAO.findById(id);
 		if(optional.isPresent()) {
-			return new ResponseEntity<Sport>(optional.get() ,HttpStatus.ACCEPTED);
+			return new ResponseEntity<SportDTO>(SportDTO.entityToDTO(optional.get()) ,HttpStatus.ACCEPTED);
 		}
 		else {
-			return new ResponseEntity<Sport>(new Sport(), HttpStatus.NO_CONTENT);
+			return new ResponseEntity<SportDTO>(SportDTO.entityToDTO(new Sport()), HttpStatus.NO_CONTENT);
 		}
 	}
 	
 	@GetMapping(value="/sport/label/{label}", produces=MediaType.APPLICATION_JSON)
-	public ResponseEntity<Sport> getSportByLabel(@PathVariable("label") String label){
+	public ResponseEntity<SportDTO> getSportByLabel(@PathVariable("label") String label){
 		Sport sport = sportDAO.findByLabel(label);
 		if(sport!=null) {
-			return new ResponseEntity<Sport> (sport, HttpStatus.ACCEPTED);
+			return new ResponseEntity<SportDTO> (SportDTO.entityToDTO(sport), HttpStatus.ACCEPTED);
 		}
 		else {
-			return new ResponseEntity<Sport> (new Sport(), HttpStatus.NO_CONTENT);
+			return new ResponseEntity<SportDTO> (SportDTO.entityToDTO(new Sport()), HttpStatus.NO_CONTENT);
 		}
 	}
 	
