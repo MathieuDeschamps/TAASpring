@@ -1,5 +1,6 @@
 package istic.m2.taa.project.TAAProject.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import istic.m2.taa.project.TAAProject.entity.LieuId;
@@ -48,9 +49,27 @@ public class RegionDTO {
 		this.lieuxIds = lieuxIds;
 	}
 	
-	public RegionDTO entityToDTO( Region region)
+	public static RegionDTO entityToDTO( Region region)
 	{
 		RegionDTO dto = new RegionDTO();
-		return null;
+		dto.setId(region.getId( ) );
+		dto.setCode(region.getCode());
+		dto.setName(region.getName());
+		
+		List<Long> listUser = new ArrayList<>();
+		region.getUsers().stream().forEach( user -> {
+			Long id = user.getId();
+			listUser.add(id);
+		});
+		dto.setUserIds(listUser);
+		
+		List<LieuId> lieuxIds = new ArrayList<>();
+		region.getLieux().stream().forEach( lieux -> {
+			LieuId id = lieux.getId();
+			lieuxIds.add(id);
+			
+		});
+		dto.setLieuxIds(lieuxIds);
+		return dto;
 	}
 }

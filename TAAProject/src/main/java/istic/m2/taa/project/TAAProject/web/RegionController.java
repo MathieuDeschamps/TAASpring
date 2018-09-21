@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import istic.m2.taa.project.TAAProject.dto.RegionDTO;
 import istic.m2.taa.project.TAAProject.entity.Region;
 import istic.m2.taa.project.TAAProject.repository.RegionDAO;
 
@@ -34,16 +35,17 @@ public class RegionController {
 		
 	}
 	@GetMapping(value="/region/id/{id}",produces=MediaType.APPLICATION_JSON)
-	public ResponseEntity<Region> getRegion( @PathVariable("id") Long id){
+	public ResponseEntity<RegionDTO> getRegion( @PathVariable("id") Long id){
 		
 		Optional<Region> opt = regionDAO.findById(id);
 		
 		if( opt.isPresent( ) ){
 			Region region = opt.get();
-			return new ResponseEntity<Region>(region,HttpStatus.ACCEPTED);
+			
+			return new ResponseEntity<RegionDTO>(RegionDTO.entityToDTO(region),HttpStatus.ACCEPTED);
 		}
-		Region region = null;
-		return new ResponseEntity<Region>(region,HttpStatus.NO_CONTENT);
+		RegionDTO region = null;
+		return new ResponseEntity<RegionDTO>(region,HttpStatus.NO_CONTENT);
 		
 	}
 	
