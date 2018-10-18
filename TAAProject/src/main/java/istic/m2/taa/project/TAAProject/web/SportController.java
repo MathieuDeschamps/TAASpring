@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import istic.m2.taa.project.TAAProject.dto.SportDTO;
 import istic.m2.taa.project.TAAProject.entity.Sport;
+import istic.m2.taa.project.TAAProject.entity.Sportexterieur;
 import istic.m2.taa.project.TAAProject.repository.SportDAO;
 
 @RestController
@@ -32,7 +33,7 @@ public class SportController {
 			return new ResponseEntity<SportDTO>(SportDTO.entityToDTO(optional.get()) ,HttpStatus.ACCEPTED);
 		}
 		else {
-			return new ResponseEntity<SportDTO>(SportDTO.entityToDTO(new Sport()), HttpStatus.NO_CONTENT);
+			return ResponseEntity.noContent().build();
 		}
 	}
 	
@@ -43,7 +44,7 @@ public class SportController {
 			return new ResponseEntity<SportDTO> (SportDTO.entityToDTO(sport), HttpStatus.ACCEPTED);
 		}
 		else {
-			return new ResponseEntity<SportDTO> (SportDTO.entityToDTO(new Sport()), HttpStatus.NO_CONTENT);
+			return ResponseEntity.noContent().build();
 		}
 	}
 	
@@ -51,6 +52,20 @@ public class SportController {
 	public Response addSport(@RequestBody Sport sport) {
 		sportDAO.save(sport);
 		return Response.noContent().status(Status.ACCEPTED).build();
+	}
+	
+	
+	@GetMapping("/sportexterieur/{id}")
+	public ResponseEntity<SportDTO> getSportExtById (@PathVariable("id") long id){
+		Optional<Sportexterieur> optional = sportDAO.getSportExterieur(id);
+		
+		if(optional.isPresent()) {
+			return new ResponseEntity<SportDTO>(SportDTO.entityToDTOexterieur(optional.get()) ,HttpStatus.ACCEPTED);
+		}
+		else {
+			return ResponseEntity.noContent().build();
+		}
+		
 	}
 	
 	@PutMapping(value="/sport", produces=MediaType.TEXT_PLAIN, consumes=MediaType.APPLICATION_JSON)

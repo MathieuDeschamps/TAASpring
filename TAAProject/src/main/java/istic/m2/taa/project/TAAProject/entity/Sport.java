@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="DTYPE", discriminatorType=DiscriminatorType.STRING)
-public class Sport  {
+public abstract class Sport  {
 	
 	private long id;
 	private String label;
