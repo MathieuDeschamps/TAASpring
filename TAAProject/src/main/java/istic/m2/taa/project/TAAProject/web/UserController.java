@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import istic.m2.taa.project.TAAProject.dto.UserDTO;
+import istic.m2.taa.project.TAAProject.entity.Region;
 import istic.m2.taa.project.TAAProject.entity.User;
+import istic.m2.taa.project.TAAProject.repository.RegionDAO;
 import istic.m2.taa.project.TAAProject.repository.UserDAO;
 
 @RestController
@@ -24,6 +27,8 @@ public class UserController {
 	
 	
 	@Autowired UserDAO userDAO;
+	
+	@Autowired RegionDAO regionDAO;
 	
 	@GetMapping(value="/users",produces=MediaType.APPLICATION_JSON)
 	public ResponseEntity<List<User>> getUsers(){
@@ -34,15 +39,14 @@ public class UserController {
 	}
 	
 	@GetMapping(value="/user/id/{id}",produces=MediaType.APPLICATION_JSON)
-	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+	public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
 		Optional<User> opt = userDAO.findById(id);
 		if( opt.isPresent( ) ){
-			return new ResponseEntity<User>(opt.get(), HttpStatus.ACCEPTED);
+			return new ResponseEntity<UserDTO>(UserDTO.userToDTO(opt.get()), HttpStatus.ACCEPTED);
 		}
 		else{
-			User user = null;
 			
-			return new ResponseEntity<User>(user,HttpStatus.NO_CONTENT);
+			return ResponseEntity.notFound().build();
 		}	
 	}
 	
@@ -76,6 +80,27 @@ public class UserController {
 			userDAO.save(user);
 		}
 		return Response.noContent().status(Status.ACCEPTED).build();
+	}
+	
+	@PutMapping(value="/user/{userId}/suscribeRegion/{id}",produces={MediaType.APPLICATION_JSON,MediaType.TEXT_PLAIN},consumes=MediaType.APPLICATION_JSON)
+	public Response suscribeToRegion(@PathVariable("userId") Long userId,@PathVariable("id") Long id ){
+		
+		Optional<Region> optReg = regionDAO.findById(id);
+		Optional<User> optUsr = userDAO.findById(userId);
+		
+		if( !optReg.isPresent() || !optUsr.isPresent() )
+		{
+			return Response.noContent().status(Status.NOT_FOUND).build();
+		}
+		Region reg = optReg.get();
+		User user = optUsr.get();
+		
+		reg.getUsers().add(user);
+		regionDAO.save(reg);
+		user.getRegions().add(reg);
+	
+		return Response.noContent().status(Status.ACCEPTED).build();
+		
 	}
 	
 	
