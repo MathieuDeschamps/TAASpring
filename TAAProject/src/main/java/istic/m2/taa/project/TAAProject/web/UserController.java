@@ -1,24 +1,5 @@
 package istic.m2.taa.project.TAAProject.web;
 
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import istic.m2.taa.project.TAAProject.dto.UserDTO;
 import istic.m2.taa.project.TAAProject.entity.Region;
 import istic.m2.taa.project.TAAProject.entity.User;
@@ -27,6 +8,7 @@ import istic.m2.taa.project.TAAProject.repository.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,11 +59,12 @@ public class UserController {
         return userDAO.findByName(pseudo);
     }
 
-    //@CrossOrigin(origins="http://localhost:4200")@PostMapping(value = "/user", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
+    //@CrossOrigin(origins="http://localhost:4200")
+    @PostMapping(value = "/user", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
     public Response addUser(@RequestBody User user) {
-        System.out.println("coucou");
-		String password = Base64.getDecoder().decode(user.getPassword()).toString();
-		user.setPassword( new BCryptPasswordEncoder().encode(password));userDAO.save(user);
+        String password = Base64.getDecoder().decode(user.getPassword()).toString();
+        user.setPassword(new BCryptPasswordEncoder().encode(password));
+        userDAO.save(user);
         return Response.ok(user.getId()).status(Status.ACCEPTED)
                 .build();
     }
@@ -121,13 +104,23 @@ public class UserController {
 
     }
 
+    // Connexion avec GET (password en base64 dans l'URL, a éviter)
     @GetMapping(value = "/user/connect/{password}/{pseudo}", produces = MediaType.APPLICATION_JSON)
     public ResponseEntity<Boolean> connectUser(@PathVariable("password") String password, @PathVariable("pseudo") String pseudo) throws UnsupportedEncodingException {
-
         byte[] decodedAsBytes = Base64.getDecoder().decode(password);
         String decoded = new String(decodedAsBytes, "UTF-8");
 
         boolean matches = passwordEncoder.matches(decoded, userDAO.findByName(pseudo).getPassword());
+        return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping(value = "/user/connect", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
+    public  ResponseEntity<Boolean> connectTheUser(@RequestBody User user) throws UnsupportedEncodingException {
+
+        byte[] decodedAsBytes = Base64.getDecoder().decode(user.getPassword());
+        String decoded = new String(decodedAsBytes, "UTF-8");
+
+        boolean matches = passwordEncoder.matches(decoded, userDAO.findByName(user.getPseudo()).getPassword());
         return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
     }
 
