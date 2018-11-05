@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -68,7 +70,8 @@ public class UserController {
     //@CrossOrigin(origins="http://localhost:4200")
     @PostMapping(value = "/user", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
     public Response addUser(@RequestBody User user) {
-        String password = Base64.getDecoder().decode(user.getPassword()).toString();
+    	System.out.println("encoded: "+user.getPassword());
+        String password = new String(Base64.getDecoder().decode(user.getPassword()));
         user.setPassword(new BCryptPasswordEncoder().encode(password));
         userDAO.save(user);
         return Response.ok(user.getId()).status(Status.ACCEPTED)
