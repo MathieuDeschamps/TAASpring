@@ -10,7 +10,7 @@ import istic.m2.taa.project.TAAProject.entity.Sportexterieur;
 public class SportDTO {
 	private long id;
 	private String label;
-	private Set<Long> usersIds;
+	//private Set<Long> usersIds;
 	private Set<LieuId> lieusids;
 	private Double temperatureMax;
 	private Double temperatureMin;
@@ -27,12 +27,7 @@ public class SportDTO {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	public Set<Long> getUsersIds() {
-		return usersIds;
-	}
-	public void setUsersIds(Set<Long> usersIds) {
-		this.usersIds = usersIds;
-	}
+	
 	public Set<LieuId> getLieusids() {
 		return lieusids;
 	}
@@ -62,9 +57,7 @@ public class SportDTO {
 		sport.getLieus().stream().forEach(lieu->{
 			response.getLieusids().add(lieu.getId());
 		});
-		sport.getUsers().stream().forEach(users->{
-			response.getUsersIds().add(users.getId());
-		});
+		
 		return response;
 	}
 	
@@ -79,9 +72,7 @@ public class SportDTO {
 		sport.getLieus().stream().forEach(lieu->{
 			response.getLieusids().add(lieu.getId());
 		});
-		sport.getUsers().stream().forEach(users->{
-			response.getUsersIds().add(users.getId());
-		});
+		
 		return response;
 	}
 	

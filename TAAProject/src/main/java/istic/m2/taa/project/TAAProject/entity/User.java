@@ -21,7 +21,7 @@ public class User implements Serializable{
 	private String password;
 	private String email;
 	private Set<Region> regions;
-	private Set<Sport> sports;
+	private Set<Sportexterieur> sports;
 
 
 	@Id
@@ -69,11 +69,11 @@ public class User implements Serializable{
 
 	@ManyToMany
 	@JoinTable(name = "sports_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "sport_id"))
-	public Set<Sport> getSports() {
+	public Set<Sportexterieur> getSports() {
 		return sports;
 	}
 
-	public void setSports(Set<Sport> sports) {
+	public void setSports(Set<Sportexterieur> sports) {
 		this.sports = sports;
 	}
 

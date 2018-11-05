@@ -2,8 +2,10 @@ package istic.m2.taa.project.TAAProject.web;
 
 import istic.m2.taa.project.TAAProject.dto.UserDTO;
 import istic.m2.taa.project.TAAProject.entity.Region;
+import istic.m2.taa.project.TAAProject.entity.Sportexterieur;
 import istic.m2.taa.project.TAAProject.entity.User;
 import istic.m2.taa.project.TAAProject.repository.RegionDAO;
+import istic.m2.taa.project.TAAProject.repository.SportDAO;
 import istic.m2.taa.project.TAAProject.repository.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,9 @@ public class UserController {
 
     @Autowired
     UserDAO userDAO;
+    
+    @Autowired
+    SportDAO sportDao;
 
     @Autowired
     RegionDAO regionDAO;
@@ -51,6 +56,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    
 
 
     @GetMapping(value = "/user/pseudo/{pseudo}", produces = MediaType.APPLICATION_JSON)
@@ -122,6 +128,12 @@ public class UserController {
 
         boolean matches = passwordEncoder.matches(decoded, userDAO.findByName(user.getPseudo()).getPassword());
         return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
+    }
+    
+    @GetMapping(value ="/user/{id}/sports")
+    public ResponseEntity<?> getUserSports(@PathVariable("id") Long id )
+    {
+    	return new ResponseEntity<List<Sportexterieur>>(sportDao.getSportExtByUser(id), HttpStatus.ACCEPTED);
     }
 
 

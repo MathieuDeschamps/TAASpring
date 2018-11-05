@@ -9,6 +9,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Lieu {
 
@@ -28,6 +30,7 @@ public class Lieu {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name="lieu_sport",
 			   joinColumns= {@JoinColumn(name = "code_postal_id"),@JoinColumn(name = "label_id"),},
@@ -40,6 +43,7 @@ public class Lieu {
 		this.sports = sports;
 	}
 
+	@JsonIgnore
 	@ManyToOne
 	public Region getRegion() {
 		return region;

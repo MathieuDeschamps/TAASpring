@@ -5,6 +5,7 @@ import java.util.List;
 
 import istic.m2.taa.project.TAAProject.entity.Region;
 import istic.m2.taa.project.TAAProject.entity.Sport;
+import istic.m2.taa.project.TAAProject.entity.Sportexterieur;
 import istic.m2.taa.project.TAAProject.entity.User;
 
 public class UserDTO {
@@ -61,7 +62,7 @@ public class UserDTO {
 		
 		dto.setRegionsId(region);
 		List<Long> sports = new ArrayList<>();
-		for(Sport sp : user.getSports( ) )
+		for(Sportexterieur sp : user.getSports( ) )
 		{
 			sports.add(sp.getId( ) );
 		}

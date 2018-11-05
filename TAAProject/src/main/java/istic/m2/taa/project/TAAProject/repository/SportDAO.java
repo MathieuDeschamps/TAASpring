@@ -1,5 +1,6 @@
 package istic.m2.taa.project.TAAProject.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -21,5 +22,8 @@ public interface SportDAO extends JpaRepository<Sport, Long>{
 	
 	@Query(value="SELECT s FROM Sportexterieur s WHERE s.id = :id ")
 	public Optional<Sportexterieur> getSportExterieur(@Param("id") long id);
+	
+	@Query( nativeQuery= true ,value="Select s.* from SPORT s  left join SPORTS_USER sp on s.id=sp.SPORT_ID where sp.USER_ID = ?1")
+	public List<Sportexterieur> getSportExtByUser(@Param("id") long id);
 
 }
