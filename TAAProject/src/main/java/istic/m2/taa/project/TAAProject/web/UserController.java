@@ -111,31 +111,40 @@ public class UserController {
 
     // Connexion avec GET (password en base64 dans l'URL, a éviter)
     @GetMapping(value = "/user/connect/{password}/{pseudo}", produces = MediaType.APPLICATION_JSON)
-    public ResponseEntity<Boolean> connectUser(@PathVariable("password") String password, @PathVariable("pseudo") String pseudo) throws UnsupportedEncodingException {
+    public ResponseEntity<Long> connectUser(@PathVariable("password") String password, @PathVariable("pseudo") String pseudo) throws UnsupportedEncodingException {
         byte[] decodedAsBytes = Base64.getDecoder().decode(password);
         String decoded = new String(decodedAsBytes, "UTF-8");
 
         User usr = userDAO.findByName(pseudo);
         if (usr == null) {
-            return new ResponseEntity<Boolean>(false, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Long>((long) -1, HttpStatus.NOT_FOUND);
         } else {
             boolean matches = passwordEncoder.matches(decoded, usr.getPassword());
-            return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
+            if(matches){
+                return new ResponseEntity<Long>(usr.getId(), HttpStatus.ACCEPTED);
+            }
+            else{
+                return new ResponseEntity<Long>((long) -1, HttpStatus.ACCEPTED);
+            }
         }
     }
 
     @PostMapping(value = "/user/connect", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
-    public ResponseEntity<Boolean> connectTheUser(@RequestBody User user) throws UnsupportedEncodingException {
+    public ResponseEntity<Long> connectTheUser(@RequestBody User user) throws UnsupportedEncodingException {
 
-        byte[] decodedAsBytes = Base64.getDecoder().decode(user.getPassword());
-        String decoded = new String(decodedAsBytes, "UTF-8");
+        String decoded = new String(Base64.getDecoder().decode(user.getPassword()), "UTF-8");
         User usr = userDAO.findByName(user.getPseudo());
         if (usr == null) {
             System.out.println("L utilisateur retourné par la base est NULL");
-            return new ResponseEntity<Boolean>(false, HttpStatus.ACCEPTED);
+            return new ResponseEntity<Long>((long) -1, HttpStatus.ACCEPTED);
         } else {
             boolean matches = passwordEncoder.matches(decoded, usr.getPassword());
-            return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
+            if(matches){
+                return new ResponseEntity<Long>(usr.getId(), HttpStatus.ACCEPTED);
+            }
+            else{
+                return new ResponseEntity<Long>((long) -1, HttpStatus.ACCEPTED);
+            }
         }
 
     }
