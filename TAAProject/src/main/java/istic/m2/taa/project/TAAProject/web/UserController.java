@@ -14,8 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -30,7 +28,7 @@ public class UserController {
 
     @Autowired
     UserDAO userDAO;
-    
+
     @Autowired
     SportDAO sportDao;
 
@@ -58,7 +56,6 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-    
 
 
     @GetMapping(value = "/user/pseudo/{pseudo}", produces = MediaType.APPLICATION_JSON)
@@ -70,7 +67,6 @@ public class UserController {
     //@CrossOrigin(origins="http://localhost:4200")
     @PostMapping(value = "/user", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
     public Response addUser(@RequestBody User user) {
-    	System.out.println("encoded: "+user.getPassword());
         String password = new String(Base64.getDecoder().decode(user.getPassword()));
         user.setPassword(new BCryptPasswordEncoder().encode(password));
         userDAO.save(user);
@@ -119,24 +115,34 @@ public class UserController {
         byte[] decodedAsBytes = Base64.getDecoder().decode(password);
         String decoded = new String(decodedAsBytes, "UTF-8");
 
-        boolean matches = passwordEncoder.matches(decoded, userDAO.findByName(pseudo).getPassword());
-        return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
+        User usr = userDAO.findByName(pseudo);
+        if (usr == null) {
+            return new ResponseEntity<Boolean>(false, HttpStatus.NOT_FOUND);
+        } else {
+            boolean matches = passwordEncoder.matches(decoded, usr.getPassword());
+            return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
+        }
     }
 
     @PostMapping(value = "/user/connect", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
-    public  ResponseEntity<Boolean> connectTheUser(@RequestBody User user) throws UnsupportedEncodingException {
+    public ResponseEntity<Boolean> connectTheUser(@RequestBody User user) throws UnsupportedEncodingException {
 
         byte[] decodedAsBytes = Base64.getDecoder().decode(user.getPassword());
         String decoded = new String(decodedAsBytes, "UTF-8");
+        User usr = userDAO.findByName(user.getPseudo());
+        if (usr == null) {
+            System.out.println("L utilisateur retourné par la base est NULL");
+            return new ResponseEntity<Boolean>(false, HttpStatus.ACCEPTED);
+        } else {
+            boolean matches = passwordEncoder.matches(decoded, usr.getPassword());
+            return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
+        }
 
-        boolean matches = passwordEncoder.matches(decoded, userDAO.findByName(user.getPseudo()).getPassword());
-        return new ResponseEntity<Boolean>(matches, HttpStatus.ACCEPTED);
     }
-    
-    @GetMapping(value ="/user/{id}/sports")
-    public ResponseEntity<?> getUserSports(@PathVariable("id") Long id )
-    {
-    	return new ResponseEntity<List<Sportexterieur>>(sportDao.getSportExtByUser(id), HttpStatus.ACCEPTED);
+
+    @GetMapping(value = "/user/{id}/sports")
+    public ResponseEntity<?> getUserSports(@PathVariable("id") Long id) {
+        return new ResponseEntity<List<Sportexterieur>>(sportDao.getSportExtByUser(id), HttpStatus.ACCEPTED);
     }
 
 
