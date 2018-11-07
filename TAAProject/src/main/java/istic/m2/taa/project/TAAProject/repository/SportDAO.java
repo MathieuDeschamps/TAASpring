@@ -19,6 +19,9 @@ public interface SportDAO extends JpaRepository<Sport, Long>{
 	
 	@Query(value="SELECT s FROM Sport s WHERE s.label = :label")
 	public Sport findByLabel(@Param("label") String label);
+
+	@Query(value="SELECT s FROM Sport s")
+	public List<Sport> findAllSport();
 	
 	@Query(value="SELECT s FROM Sportexterieur s WHERE s.id = :id ")
 	public Optional<Sportexterieur> getSportExterieur(@Param("id") long id);

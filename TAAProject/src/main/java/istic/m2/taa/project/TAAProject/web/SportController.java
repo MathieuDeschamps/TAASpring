@@ -1,6 +1,7 @@
 package istic.m2.taa.project.TAAProject.web;
 
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.core.Response;
@@ -31,6 +32,18 @@ public class SportController {
 		Optional<Sport> optional = sportDAO.findById(id);
 		if(optional.isPresent()) {
 			return new ResponseEntity<SportDTO>(SportDTO.entityToDTO(optional.get()) ,HttpStatus.ACCEPTED);
+		}
+		else {
+			return ResponseEntity.noContent().build();
+		}
+	}
+
+	@GetMapping(value="/sport/all",produces=MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<Sport>> getallSport (){
+
+		List<Sport> sports = sportDAO.findAllSport();
+		if(sports != null) {
+			return new ResponseEntity<List<Sport>>(sports ,HttpStatus.ACCEPTED);
 		}
 		else {
 			return ResponseEntity.noContent().build();
