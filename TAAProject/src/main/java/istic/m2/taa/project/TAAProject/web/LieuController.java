@@ -1,6 +1,9 @@
 package istic.m2.taa.project.TAAProject.web;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -50,6 +53,22 @@ public class LieuController {
 			return new ResponseEntity<LieuDTO>(LieuDTO.entityToDTO(new Lieu()), HttpStatus.NO_CONTENT);
 		}
 	}
+
+	@GetMapping(value="lieu/all",produces=MediaType.APPLICATION_JSON)
+	public ResponseEntity<List<LieuDTO>> getAllLieu(){
+		List<Lieu> lieux = lieuDAO.getAllLieu();
+
+		List<LieuDTO> lieuxDTO = lieux.stream().map(data -> LieuDTO.entityToDTO(data)).collect(Collectors.toList());
+		if(lieux != null) {
+			return new ResponseEntity<List<LieuDTO>>(lieuxDTO ,HttpStatus.ACCEPTED);
+		}
+		else {
+			List<LieuDTO> result = new ArrayList<LieuDTO>();
+			result.add(LieuDTO.entityToDTO(new Lieu()));
+			return new ResponseEntity<List<LieuDTO>>(result, HttpStatus.NO_CONTENT);
+		}
+	}
+
 	
 	@PostMapping(value="/lieu",produces=MediaType.TEXT_PLAIN,consumes=MediaType.APPLICATION_JSON)
 	public Response addLieu(@RequestBody Lieu lieu) {
