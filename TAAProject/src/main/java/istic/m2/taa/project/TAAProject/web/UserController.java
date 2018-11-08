@@ -2,6 +2,7 @@ package istic.m2.taa.project.TAAProject.web;
 
 import istic.m2.taa.project.TAAProject.dto.UserDTO;
 import istic.m2.taa.project.TAAProject.entity.Region;
+import istic.m2.taa.project.TAAProject.entity.Sport;
 import istic.m2.taa.project.TAAProject.entity.Sportexterieur;
 import istic.m2.taa.project.TAAProject.entity.User;
 import istic.m2.taa.project.TAAProject.repository.RegionDAO;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.Console;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 public class UserController {
@@ -85,6 +88,27 @@ public class UserController {
             userDAO.save(usr);
         } else {
             userDAO.save(user);
+        }
+        return Response.noContent().status(Status.ACCEPTED).build();
+    }
+
+    //@CrossOrigin(origins="http://localhost:4200")
+    @PutMapping(value = "/user/{id}/Sport", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
+    public Response addSportUser(@RequestBody Long sportid, @PathVariable("id") Long id) {
+        Optional<User> optUser = userDAO.findById(id);
+        Optional<Sportexterieur> optSport = sportDao.getSportExterieur(sportid);
+        if (optUser.isPresent()) {
+            User usr = optUser.get();
+            if(optSport.isPresent()){
+                Sportexterieur sprt = optSport.get();
+                usr.addSport(sprt);
+                userDAO.save(usr);
+            }
+            else{
+                return Response.noContent().status(Status.NO_CONTENT).build();
+            }
+        } else {
+            return Response.noContent().status(Status.NO_CONTENT).build();
         }
         return Response.noContent().status(Status.ACCEPTED).build();
     }

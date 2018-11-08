@@ -77,6 +77,10 @@ public class User implements Serializable{
 		this.sports = sports;
 	}
 
+	public void addSport(Sportexterieur sports) {
+		this.sports.add(sports);
+	}
+
 	
 
 
