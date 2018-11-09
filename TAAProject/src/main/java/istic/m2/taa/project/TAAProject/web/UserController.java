@@ -93,7 +93,7 @@ public class UserController {
     }
 
     //@CrossOrigin(origins="http://localhost:4200")
-    @PutMapping(value = "/user/{id}/Sport", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
+    @PutMapping(value = "/user/{id}/sport", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
     public Response addSportUser(@RequestBody Long sportid, @PathVariable("id") Long id) {
         Optional<User> optUser = userDAO.findById(id);
         Optional<Sportexterieur> optSport = sportDao.getSportExterieur(sportid);
