@@ -113,6 +113,32 @@ public class UserController {
         return Response.noContent().status(Status.ACCEPTED).build();
     }
 
+
+
+    //@CrossOrigin(origins="http://localhost:4200")
+    @PutMapping(value = "/user/{id}/removeSport", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
+    public Response deleteSportUser(@RequestBody Long sportid, @PathVariable("id") Long id) {
+        Optional<User> optUser = userDAO.findById(id);
+        Optional<Sportexterieur> optSport = sportDao.getSportExterieur(sportid);
+        if (optUser.isPresent()) {
+            User usr = optUser.get();
+            if(optSport.isPresent()){
+                Sportexterieur sprt = optSport.get();
+                usr.deleteSport(sprt);
+                userDAO.save(usr);
+            }
+            else{
+                return Response.noContent().status(Status.NO_CONTENT).build();
+            }
+        } else {
+            return Response.noContent().status(Status.NO_CONTENT).build();
+        }
+        return Response.noContent().status(Status.ACCEPTED).build();
+    }
+
+
+
+
     @PutMapping(value = "/user/{userId}/suscribeRegion/{id}", produces = {MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN}, consumes = MediaType.APPLICATION_JSON)
     public Response suscribeToRegion(@PathVariable("userId") Long userId, @PathVariable("id") Long id) {
 

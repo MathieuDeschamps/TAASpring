@@ -81,6 +81,10 @@ public class User implements Serializable{
 		this.sports.add(sports);
 	}
 
+	public void deleteSport(Sportexterieur sports){
+		this.sports.remove(sports);
+	}
+
 	
 
 
