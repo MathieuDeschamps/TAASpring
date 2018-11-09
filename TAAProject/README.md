@@ -1,27 +1,57 @@
-# Projet TAA
+# AngularTaa
 
-Dépôt de la partie back-end du projet de TAA. Le serveur se lance sur le port 8081 et la base de données est une base HSQL sur le port 8085
+Par Mathieux DESCHAMPS et Charles LARZILLIÈRE
+
+## Installation et informations générales
+
+Cloner le projet sur votre ordinateur, et executer depuis le dossier GLI la commande `ng serve`. Pour que le frontend communique correctement avec le backend de notre application, il est indispensable de l'executer sur le port 4200 de votre ordinateur.
+Acceder ensuite a l'application dans votre navigateur a l'adresse [`http://localhost:4200/`](http://localhost:4200/).
+
+Pour installer et executer le backend de notre application, rendez-vous sur le  [dépot associé](https://github.com/MathieuDeschamps/TAASpring/tree/master/TAAProject).
 
 # Travail effectué
 
-## Modèle de données
+## Étapes préliminaires
 
-Notre modèle de données (utile) contient 5 tables: User, Lieu, Sport, Lieu_Sport, Sport_User. Il y a deux tables suplémentaires dont on ne s'est pas servie au final (region et region_user).
+### Choix technologiques
+Au debut du projet, nous nous sommes mis d'accord sur la forme que prendrais notre applications, ainsi que les différents modules et API utilisés. 
+Pour la récupération de la météo, nous avons choisis de faire appel a l'API de [OpenWeatherMap](https://openweathermap.org/), car elle était a la fois simple, efficace, et gratuite.
+Nous avons pris la decision de devellopé l'application avec Angular, car nous étions tout les deux plus a l'aise avec cette technologie qu'avec React.
+Enfin, la partie graphique de notre applications a été géré avec [Materialize](https://materializecss.com/) afin d'obtenir facilement une interface qui nous plait.
 
-## Gestion des CORS
+### Conception
 
-Comme nous ne passons pas par un serveur NGINX pour lier le back avec le front nous avons du gérer le cross-domain en créant une classe de configuration qui implémente l'interface WebMvcConfigurer (classe WebConfig dans le package security). Nous n'avons ouvert le serveur n'importe comment mais juste permit au front d'acceder à l'API (localhost:4200).
+Nous avons décidé de séparer notre application en 4 pages :
 
-Le mapping à été effectué avec spring data jpa.
+ - **Login** où l’utilisateur est invité a rentrer ses identifiant afin de se connecter. Deux champs *Login* et *Mot de passe* sont présent, ainsi que deux boutons *connection* et *Register* afin de pouvoir s'inscrire.
+ - **Register** où l'utilisateur peut rentrer ses informations pour pouvoir s'inscrire.
+ - **Home** où l'utilisateur pourra choisir parmis les sports qu'il a rentré , les lieux ou il pourras les pratiqué. Une fois sont choix fait, un bouton *Get Result* lui donnera les prédictions météos et les informations sur la praticabilité sur les cinq jours a venir.
+ - **Préférence** où l'utilisateur pourra gérer ses sports favoris.
 
-##  API Rest
-
-L'API rest à été implémenter via les annotations @RestController de spring, pour la documentaitonde celle-ci nous avons intégrer swagger. Commme nous avons créer une classe implémentant WebMVCConfigurer nous sommes obligé de surcharger la méthode addRessourceHandler afin que l'url pour accéder à swagger soit accesible.
-
-
-## Authentification
-
-Pour l'auhentification des utilisateur nous n'avons pas eu le temps de gérer ça correctement. La configuration de spring security est complétement ouvert. Lors de la connection nous nous servons de l'api et comparons le mot de passe utilisateur hasher en bcrypt avec le mot de passe envoyer par le front end (encoder en base 64 pour le transport).
+Nous avons donc fait un premier documents qui nous servira de ligne rouge pour le développement, ainsi qu'une répartition des taches. Vous pouvez retrouver ce document [sur notre depot](https://github.com/MathieuDeschamps/GLI/blob/master/Document%20Conception%20pr%C3%A9liminaire%20LARZILLIERE_DESCHAMPS.pdf).
 
 
+## Développement
 
+Notre applications est composé de 5 composants, correspondants aux 4 pages de l'applications auqel on ajoute la barre de navigation. Ces composants sont appuyé par 6 services.
+
+#### Barre de navigation
+La barre de navigation est un compostant court, qui sert a l’ergonomie général du site. Placé en haut, elle contient le titre de l'application (qui sert aussi de bouton de retour a l'accueil) , et de deux boutons (déconnexion et préférence) qui apparaissent une fois l'utilisateur connecté.
+#### Register
+Pour s'inscrire, l'utilisateur a besoin de rentré un Pseudo, un mot de passe ainsi qu'une adresse email.
+Une fois les champs remplis, une le mot de passe est chiffré en base64 avant d'être envoyé via une requête POST.
+L'utilisateur est ensuite automatiquement connecté en renvoyé a la page *Home*.
+
+#### LogIn
+La page login contient deux champs pour que l'utilisateur rentre ses informations. Lorsqu'il clique sur le bouton de connexion, le mot de passe est encrypté en base64, puis envoyé au back avec le pseudo via une requete POST. Le mot de passe sera chiffré a l'aide de Bcrypt dans la base de donné.
+La requête  retourne -1 en cas d’échec de la connexion, un message d'erreur s'affichera alors. De même, si jamais la requête échoue pour une autre raison, l'utilisateur en sera informé.
+Dans le cas ou la requête est réussi, elle renvoi l'id de l'utilisateur. Cet id sera utilisé pour connecter l’utilisateur dans notre application via notre service *user*, et nous le conserverons ensuite pour la suite de la navigation.
+
+#### Home
+
+Cette page est le cœur de l'application. Ici, l’utilisateur peut choisir dans un menu déroulant un de ses sports favoris, puis un des lieux ou il souhaite le pratiqué. Une fois cette sélection faite, le bouton *Get Result* donne a l'utilisateur contenant toutes les informations utiles.
+Ce tableau contient 5 lignes, pour les 5 journées a venir. Chaque ligne donne la date et l'heure de l'estimation, la température attendus ce jour, une description courte de la météo (*light rain*, *clear sky* etc ...) , une fourchette de température pour laquelle le sport est praticable, et un indicateur en forme de Smiley. Si la température attendu ce jour la est inclus dans la fourchette enregistré en base de donné, un smiley souriant apparaît, et dans le cas contraire, le smiley fait la tête.
+
+Les prédiction météorologique vienne de l'API de OpenWeatherMap, qui est appelé directement depuis le front  lorsque l'utilisateur appuie sur *Get Result*, et renvois la météo sur 5 jours par créneaux de 3 heures. Nous trions ces résultats pour ne garder que les données journalières de 15h00. Cependant, nous pourrions choisir un autre horaire, ou même affiché plus d'horaires, mais par soucis de clarté, nous avons choisis de nous limité a une valeur par jour.
+
+#### Préférence
