@@ -1,6 +1,16 @@
 # Projet TAA
 
+Par [Mathieux DESCHAMPS](https://github.com/MathieuDeschamps) et [Charles LARZILLIÈRE](https://github.com/JodAetaem)
+
 Dépôt de la partie back-end du projet de TAA. Le serveur se lance sur le port 8081 et la base de données est une base HSQL sur le port 8085
+
+#Lancer l'application
+
+Pour lancer l'application il faut au choix :
+
+ - Le lancer directement depuis l'ide de votre choix
+ - Builder l'application via maven puis lancer le serveur via le jar créer dans le reperoire target.
+ - Lors du premier lancement executer le script pour remplire la base de données
 
 # Travail effectué
 
