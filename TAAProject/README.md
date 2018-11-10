@@ -32,6 +32,3 @@ L'API rest à été implémenter via les annotations @RestController de spring, 
 ## Authentification
 
 Pour l'auhentification des utilisateur nous n'avons pas eu le temps de gérer ça correctement. La configuration de spring security est complétement ouvert. Lors de la connection nous nous servons de l'api et comparons le mot de passe utilisateur hasher en bcrypt avec le mot de passe envoyer par le front end (encoder en base 64 pour le transport).
-
-
-
